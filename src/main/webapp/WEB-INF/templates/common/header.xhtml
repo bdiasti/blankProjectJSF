@@ -1,0 +1,15 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets" 
+      xmlns:blankproject="http://xmlns.jcp.org/jsf/composite/blankproject">
+    
+    <ui:composition>
+        <blankproject:navbar label="blankProject" value="#{request.contextPath}/protected/pages/pessoaSearch.xhtml">
+            <blankproject:navitem label="Contact Us" value="#{request.contextPath}/public/pages/contactUs.xhtml"/>
+            <blankproject:navitem label="About" value="#{request.contextPath}/public/pages/about.xhtml"/>            
+        </blankproject:navbar>
+	
+        <div class="page-header">
+            <h1><ui:insert name="headerText">Blank app JSF</ui:insert></h1>
+        </div>
+    </ui:composition>
+</html>
