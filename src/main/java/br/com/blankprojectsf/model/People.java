@@ -6,13 +6,13 @@ import java.util.List;
 
 
 /**
- * The persistent class for the "TB_PESSOA" database table.
+ * The persistent class for the "TB_PEOPLE" database table.
  * 
  */
 @Entity
-@Table(name="\"TB_PESSOA\"")
-@NamedQuery(name="TbPessoa.findAll", query="SELECT t FROM Pessoa t")
-public class Pessoa implements Serializable {
+@Table(name="\"TB_PEOPLE\"")
+@NamedQuery(name="TbPessoa.findAll", query="SELECT t FROM People t")
+public class People implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -27,13 +27,8 @@ public class Pessoa implements Serializable {
 
 	private String sexo;
 	
-	 @ManyToMany(cascade=CascadeType.ALL)
-    @JoinTable(name="\"RL_PESSOA_DEPARTAMENTO\"", 
-               joinColumns=  @JoinColumn( name = "\"CPF\""), 
-               inverseJoinColumns= @JoinColumn(name = "\"ID\"") )
-	private List<Departamento> tbDepartamentos;
 
-	public Pessoa() {
+	public People() {
 	}
 
 	public Long getCpf() {
@@ -74,14 +69,6 @@ public class Pessoa implements Serializable {
 
 	public void setSexo(String sexo) {
 		this.sexo = sexo;
-	}
-
-	public List<Departamento> getTbDepartamentos() {
-		return this.tbDepartamentos;
-	}
-
-	public void setTbDepartamentos(List<Departamento> tbDepartamentos) {
-		this.tbDepartamentos = tbDepartamentos;
 	}
 
 }

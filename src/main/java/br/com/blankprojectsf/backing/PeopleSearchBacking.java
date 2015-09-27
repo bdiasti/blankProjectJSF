@@ -1,31 +1,34 @@
 package br.com.blankprojectsf.backing;
 import java.io.Serializable;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
-import br.com.blankprojectsf.model.Pessoa;
-import br.com.blankprojectsf.service.PessoaManagerLocal;
-import br.com.blankprojectsf.service.exception.PessoaNotFound;
+import org.apache.log4j.Logger;
+
+import br.com.blankprojectsf.model.People;
+import br.com.blankprojectsf.service.PeopleManager;
+import br.com.blankprojectsf.service.PeopleManagerLocal;
+import br.com.blankprojectsf.service.exception.PeopleNotFound;
 
 @Named
 @ViewScoped
-public class PessoaSearchBacking extends BaseBacking implements Serializable {
+public class PeopleSearchBacking extends BaseBacking implements Serializable {
 
 	
-    
+	final static Logger logger = Logger.getLogger(PeopleSearchBacking.class);
+	
     @EJB
-    private PessoaManagerLocal pessoaManager;
+    private PeopleManagerLocal pessoaManager;
 
-    private List<Pessoa> pessoaList;    
+    private List<People> pessoaList;    
     private String searchNome;
     private String infoMessage;
-    private Pessoa selectedPessoa;
+    private People selectedPessoa;
     
 
     public String getsearchNome() {
@@ -36,11 +39,11 @@ public class PessoaSearchBacking extends BaseBacking implements Serializable {
         this.searchNome = searchNome;
     }
     
-    public List<Pessoa> getPessoaList() {
+    public List<People> getPessoaList() {
         return pessoaList;
     }
 
-    public void setPessoaList(List<Pessoa> pessoaList) {
+    public void setPessoaList(List<People> pessoaList) {
         this.pessoaList = pessoaList;
     }    
     
@@ -52,17 +55,18 @@ public class PessoaSearchBacking extends BaseBacking implements Serializable {
         this.infoMessage = infoMessage;
     }    
     
-    public Pessoa getSelectedPessoa() {
+    public People getSelectedPessoa() {
         return selectedPessoa;
     }
 
-    public void setSelectedPessoa(Pessoa selectedPessoa) {
+    public void setSelectedPessoa(People selectedPessoa) {
         this.selectedPessoa = selectedPessoa;
     }    
     
     public String retrievePessoaList() {
-        Pessoa searchablePessoa = new Pessoa();
+        People searchablePessoa = new People();
         
+        logger.info("Buscando nome " + searchNome);
         searchablePessoa.setNome(searchNome);
         
         pessoaList = pessoaManager.getAllPessoas(searchablePessoa);
@@ -79,14 +83,13 @@ public class PessoaSearchBacking extends BaseBacking implements Serializable {
     
     public String deletePessoa() {
         try {
-            Pessoa currentSelectedPessoa = getSelectedPessoa();
+            People currentSelectedPessoa = getSelectedPessoa();
             
             pessoaManager.removePessoa(currentSelectedPessoa.getCpf());
             pessoaList.remove(currentSelectedPessoa);
             
             infoMessage = "Pessoa deleted successfully";
-        } catch (PessoaNotFound ex) {
-            Logger.getLogger(PessoaSearchBacking.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (PeopleNotFound ex) {
             getContext().addMessage(null, new FacesMessage("An error occurs while deleting the Pessoa"));            
         }
         

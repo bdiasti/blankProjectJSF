@@ -15,10 +15,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-/**
- *
- * @author Hazem Saleh <hazems@apache.org>
- */
+
 @Stateless
 public class UserManager implements UserManagerLocal {
     
@@ -26,27 +23,26 @@ public class UserManager implements UserManagerLocal {
     EntityManager em;  
     
     public User getUser(String userID) throws UserNotFound {
-        Query query = em.createQuery("select megaUser.id, megaUser.firstName"
-                                     + ", megaUser.lastName from MegaUser megaUser where "
-                                     + "megaUser.id = :id");
+        Query query = em.createQuery("select user.id, user.firstName"
+                                     + ", user.lastName from User user where "
+                                     + "user.id = :id");
         
         query.setParameter("id", userID);
     
-        Object[] megaUserInfo;
+        Object[] userInfo;
         
         try {
-            megaUserInfo = (Object[]) query.getSingleResult();
+            userInfo = (Object[]) query.getSingleResult();
         } catch (NoResultException exception) {
             throw new UserNotFound(exception.getMessage());
         }
         
-        User megaUser = new User(
-                (String) megaUserInfo[0],
-                (String) megaUserInfo[1], 
-                (String) megaUserInfo[2], 
-                null);
+        User user = new User();
+        user.setFirstName((String) userInfo[0]);
+        user.setId((String) userInfo[1]);
+        user.setLastName((String) userInfo[2]);
         
-        return megaUser;        
+        return user;        
     }
 
     public User registerUser(User user) throws UserAlreadyExists {
@@ -69,18 +65,18 @@ public class UserManager implements UserManagerLocal {
     }
 
     public void removeUser(String userID) throws UserNotFound {
-        User megaUser = em.find(User.class, userID);
+        User user = em.find(User.class, userID);
 
-        if (megaUser == null) {
+        if (user == null) {
             throw new UserNotFound();
         }
         
-        em.remove(megaUser);
+        em.remove(user);
         em.flush();
     }
 
     public List<User> retrieveUsers() {
-        Query query = em.createQuery("select megaUser from MegaUser megaUser", User.class);
+        Query query = em.createQuery("select user from user User", User.class);
 
         List<User> result = query.getResultList();        
         

@@ -14,6 +14,7 @@
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
       <properties>
   <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+   <property name="hbm2ddl.auto" value="create-drop"/>
   </properties>
   </persistence-unit>
 </persistence>

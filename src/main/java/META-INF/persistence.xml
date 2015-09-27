@@ -2,18 +2,37 @@
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-    
-    
+             
+  <!-- Unit que faz referencia ao dataSource que foi criado na interface do glassfish   -->
   <persistence-unit name="blank" transaction-type="JTA">
 
     <jta-data-source>jdbc/dbteste</jta-data-source>
-    <class>br.com.blankprojectsf.model.Departamento</class>
-    <class>br.com.blankprojectsf.model.Pessoa</class>
+    <class>br.com.blankprojectsf.model.People</class>
     <class>br.com.blankprojectsf.model.User</class>
+    <class>br.com.blankprojectsf.model.UserGroup</class>
     
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
       <properties>
   <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+    <property name="hbm2ddl.auto" value="create"/>
   </properties>
   </persistence-unit>
+
+  
+  <!--  Criado para o JPA TOOLS do eclipse utilizar para criar tabelas ou alterações na base de dados.
+  <persistence-unit name="blank" transaction-type="RESOURCE_LOCAL">
+  	<class>br.com.blankprojectsf.model.People</class>
+  	<class>br.com.blankprojectsf.model.User</class>
+  	<class>br.com.blankprojectsf.model.UserGroup</class>
+    <properties>
+      <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />
+      <property name="javax.persistence.jdbc.url"    value="jdbc:postgresql://localhost:5432/dbtestes" />
+      <property name="javax.persistence.jdbc.user" value="postgres" />
+      <property name="javax.persistence.jdbc.password" value="123456" />
+      <property name="eclipselink.ddl-generation" value="create-tables" />
+        <property name="hbm2ddl.auto" value="create"/>
+      <property name="eclipselink.ddl-generation.output-mode" value="database" />
+    </properties>
+  </persistence-unit>
+  --> 
 </persistence>

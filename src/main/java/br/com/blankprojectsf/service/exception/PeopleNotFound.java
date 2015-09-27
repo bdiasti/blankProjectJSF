@@ -7,12 +7,12 @@ import javax.ejb.ApplicationException;
  * @author Hazem Saleh <hazems@apache.org>
  */
 @ApplicationException(rollback=true)
-public class PessoaNotFound extends Exception {
-    public PessoaNotFound () {
+public class PeopleNotFound extends Exception {
+    public PeopleNotFound () {
         this.message = "Pessoa não encontrada";
     }
     
-    public PessoaNotFound(String message) {
+    public PeopleNotFound(String message) {
         this.message = message;
     }
     

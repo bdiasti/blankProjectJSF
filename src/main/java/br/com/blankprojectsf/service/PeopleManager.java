@@ -3,26 +3,31 @@ package br.com.blankprojectsf.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
-import br.com.blankprojectsf.model.Pessoa;
-import br.com.blankprojectsf.service.exception.PessoaAlreadyExists;
-import br.com.blankprojectsf.service.exception.PessoaNotFound;
+import org.apache.log4j.Logger;
+
+import br.com.blankprojectsf.backing.PeopleAddBacking;
+import br.com.blankprojectsf.model.People;
+import br.com.blankprojectsf.service.exception.PeopleAlreadyExists;
+import br.com.blankprojectsf.service.exception.PeopleNotFound;
 
 
 @Stateless
-public class PessoaManager implements PessoaManagerLocal {
+public class PeopleManager implements PeopleManagerLocal {
 
     @PersistenceContext(unitName = "blank")
-    EntityManager em;    
+    EntityManager em;   
     
-    public Pessoa getPessoaInformation(Long PessoaID) throws PessoaNotFound {
+    final static Logger logger = Logger.getLogger(PeopleManager.class);
+    
+    public People getPessoaInformation(Long PessoaID) throws PeopleNotFound {
         Query query = em.createQuery("select pessoa.cpf, pessoa.nome, pessoa.email, pessoa.sexo "
                     + "from Pessoa pessoa where "
                     + "pessoa.cpf = :id");
@@ -34,10 +39,10 @@ public class PessoaManager implements PessoaManagerLocal {
         try {
             PessoaInfo = (Object[]) query.getSingleResult();
         } catch (NoResultException exception) {
-            throw new PessoaNotFound(exception.getMessage());
+            throw new PeopleNotFound(exception.getMessage());
         }
         
-        Pessoa pessoa = new Pessoa();
+        People pessoa = new People();
         pessoa.setCpf((Long) PessoaInfo[0]);
         pessoa.setNome((String) PessoaInfo[1]);
         pessoa.setEmail((String) PessoaInfo[2]);
@@ -47,11 +52,11 @@ public class PessoaManager implements PessoaManagerLocal {
         return pessoa;
     }
 
-    public void removePessoa(Long PessoaID) throws PessoaNotFound {
-        Pessoa Pessoa = em.find(Pessoa.class, PessoaID);
+    public void removePessoa(Long PessoaID) throws PeopleNotFound {
+        People Pessoa = em.find(People.class, PessoaID);
 
         if (Pessoa == null) {
-            throw new PessoaNotFound();
+            throw new PeopleNotFound();
         }
         
         em.remove(Pessoa);
@@ -60,48 +65,41 @@ public class PessoaManager implements PessoaManagerLocal {
     
     
 
-    public List<Pessoa> getAllPessoas(Pessoa searchablePessoa) {
-        List<Pessoa> Pessoas = new ArrayList<Pessoa>();
+    public List<People> getAllPessoas(People searchablePessoa) {
+        List<People> pessoas = new ArrayList<People>();
         String searchableNome = searchablePessoa.getNome();
         
-        Query query = em.createQuery("select pessoa.cpf, pessoa.nome, pessoa.email, pessoa.sexo "
-                    + " from Pessoa pessoa where "
-                    + "pessoa.nome like :nome");
+        TypedQuery<People>  query = em.createQuery("select pessoa"
+                    + " from People pessoa where "
+                    + "pessoa.nome like :pesquisa", People.class);
         
-        query.setParameter("nome", "%" + searchableNome + "%");
+        query.setParameter("pesquisa", "%" + searchableNome + "%");
 
-        List<Object[]> pessoaList = (List<Object[]>) query.getResultList();
+        List<People>  pessoaList =  query.getResultList();
         
         if (pessoaList == null) {
-            return Pessoas;
+            return pessoas;
         }
         
-        for (Object[] pessoaInfo : pessoaList) {
-        	
-            Pessoa pessoa = new Pessoa();
-            pessoa.setCpf((Long) pessoaInfo[0]);
-            pessoa.setNome((String) pessoaInfo[1]);
-            pessoa.setEmail((String) pessoaInfo[2]);
-            pessoa.setSexo((String) pessoaInfo[3]);
-               
-            
-            Pessoas.add(pessoa);
+        for (People p : pessoaList) {
+            pessoas.add(p);
         }
         
-        return Pessoas;       
+        return pessoas;       
     }
 
-    public Pessoa registerPessoa(Pessoa pessoa) throws PessoaAlreadyExists {
-        Query query = em.createQuery("select Pessoa from Pessoa Pessoa where "
-                    + "Pessoa.id = :id");
+    public People registerPessoa(People pessoa) throws PeopleAlreadyExists {
+        Query query = em.createQuery("select pessoa from People pessoa where "
+                    + "pessoa.cpf = :id");
         
+        logger.info("Salvando pessoa");
         query.setParameter("id", pessoa.getCpf());
 
         try {
             query.getSingleResult();
-            throw new PessoaAlreadyExists();
+            throw new PeopleAlreadyExists();
         } catch (NoResultException exception) {
-            Logger.getLogger(PessoaManager.class.getName()).log(Level.FINER, "Não tem Pessoa similares");
+            logger.error( "Não tem Pessoa similares");
         }
         
         em.persist(pessoa);   
@@ -110,11 +108,11 @@ public class PessoaManager implements PessoaManagerLocal {
         return pessoa;
     }
 
-    public Pessoa updatePessoa(Pessoa Pessoa) throws PessoaNotFound {
-        Pessoa updatablePessoa = em.find(Pessoa.class, Pessoa.getCpf());
+    public People updatePessoa(People Pessoa) throws PeopleNotFound {
+        People updatablePessoa = em.find(People.class, Pessoa.getCpf());
 
         if (updatablePessoa == null) {
-            throw new PessoaNotFound();
+            throw new PeopleNotFound();
         }
         
         mergePessoaAttrs(Pessoa, updatablePessoa);
@@ -125,7 +123,7 @@ public class PessoaManager implements PessoaManagerLocal {
         return Pessoa;
     }
 
-    private void mergePessoaAttrs(Pessoa pessoa, Pessoa updatablePessoa) {
+    private void mergePessoaAttrs(People pessoa, People updatablePessoa) {
         if (pessoa.getCpf() != null) {
             updatablePessoa.setCpf(pessoa.getCpf());
         }

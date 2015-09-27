@@ -7,12 +7,12 @@ import javax.ejb.ApplicationException;
  * @author Hazem Saleh <hazems@apache.org>
  */
 @ApplicationException(rollback=true)
-public class DepartamentoAlreadyExists extends Exception {
-    public DepartamentoAlreadyExists () {
-        this.message = "Departamento já existe";
+public class PeopleAlreadyExists extends Exception {
+    public PeopleAlreadyExists () {
+        this.message = "Pessoa já existes";
     }
     
-    public DepartamentoAlreadyExists(String message) {
+    public PeopleAlreadyExists(String message) {
         this.message = message;
     }
     
